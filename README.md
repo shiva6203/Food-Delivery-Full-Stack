@@ -42,3 +42,10 @@ food-del/
 ├── admin/
 ├── backend/
 └── README.md
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/shiva6203/Food-Delivery-Full-Stack.git
+cd Food-Delivery-Full-Stack
