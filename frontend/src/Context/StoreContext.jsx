@@ -5,7 +5,9 @@ import axios from "axios";
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
-  const url = "http://localhost:4000";
+
+  // Backend URL
+  const url = import.meta.env.VITE_BACKEND_URL;
 
   const [cartItems, setCartItems] = useState({});
   const [token, setToken] = useState("");
@@ -17,7 +19,10 @@ const StoreContextProvider = (props) => {
     if (!cartItems[itemId]) {
       setCartItems((prev) => ({ ...prev, [itemId]: 1 }));
     } else {
-      setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
+      setCartItems((prev) => ({
+        ...prev,
+        [itemId]: prev[itemId] + 1,
+      }));
     }
 
     if (token) {
@@ -30,7 +35,10 @@ const StoreContextProvider = (props) => {
   };
 
   const removeFromCart = async (itemId) => {
-    setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
+    setCartItems((prev) => ({
+      ...prev,
+      [itemId]: prev[itemId] - 1,
+    }));
 
     if (token) {
       await axios.post(
@@ -46,7 +54,9 @@ const StoreContextProvider = (props) => {
 
     for (const item in cartItems) {
       if (cartItems[item] > 0) {
-        const itemInfo = food_list.find((product) => product._id === item);
+        const itemInfo = food_list.find(
+          (product) => product._id === item
+        );
 
         if (itemInfo) {
           totalAmount += itemInfo.price * cartItems[item];
@@ -62,14 +72,16 @@ const StoreContextProvider = (props) => {
       const response = await axios.post(
         url + "/api/cart/get",
         {},
-        { headers: token }
+        {
+          headers: { token },
+        }
       );
 
       if (response.data.success) {
         setCartItems(response.data.cartData);
       }
     } catch (error) {
-      console.log("Load cart error:", error);
+      console.log(error);
     }
   };
 
@@ -79,12 +91,13 @@ const StoreContextProvider = (props) => {
 
       if (savedToken) {
         setToken(savedToken);
-        await loadCartData({ token: savedToken });
+        await loadCartData(savedToken);
       }
     }
 
     loadData();
   }, []);
+
   const contextValue = {
     url,
     food_list,
